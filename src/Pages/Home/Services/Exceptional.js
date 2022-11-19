@@ -4,7 +4,7 @@ import PrimaryButton from '../../../components/PrimaryButton/PrimaryButton';
 
 const Exceptional = () => {
     return (
-        <div className="hero min-h-screen bg-base-200">
+        <div className="hero">
             <div className="hero-content flex-col lg:flex-row">
                 <img src={treatment} className="max-w-sm rounded-lg shadow-2xl" alt='' />
                 <div>
