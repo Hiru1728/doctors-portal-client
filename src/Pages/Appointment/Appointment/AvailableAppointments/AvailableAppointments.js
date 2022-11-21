@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { format } from 'date-fns';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Loading from '../../../Shared/Loading/Loading';
 import BookingModal from '../../BookingModal/BookingModal';
 import AppointmentOption from './AppointmentOption';
@@ -10,27 +10,28 @@ const AvailableAppointments = ({ selectedDate }) => {
     const [treatment, setTreatment] = useState(null);
     const date = format(selectedDate, 'PP');
 
-    const { data: appointmentOptions = [], refetch, isLoading } = useQuery({
-        queryKey: ['appointmentOptions', date],
-        queryFn: () => fetch(`http://localhost:5000/appointmentOptions?date=${date}`)
-            .then(res => res.json())
-    });
+    // const { data: appointmentOptions = [], refetch, isLoading } = useQuery({
+    //     queryKey: ['appointmentOptions', date],
+    //     queryFn: () => fetch(`https://doctors-portal-server-phi.vercel.app/appointmentOptions?date=${date}`)
+    //         .then(res => res.json())
+    // });
 
     /* /v2/appointmentOptions */
+
+
+    // optional
+    const { data: appointmentOptions = [], refetch, isLoading } = useQuery({
+        queryKey: ['appointmentOptions', date],
+        queryFn: async () => {
+            const res = await fetch(`https://doctors-portal-server-phi.vercel.app/appointmentOptions?date=${date}`)
+            const data = await res.json();
+            return data;
+        }
+    })
 
     if (isLoading) {
         return <Loading></Loading>
     }
-
-    // optional
-    // const {data:appointmentOptions=[]}=useQuery({
-    //     queryKey:['appointmentOptions'],
-    //     queryFn: async ()=>{
-    //         const res=await fetch('localhost:5000/appointmentOptions')
-    //         const data=await res.json();
-    //         return data;
-    //     }
-    // })
 
     // useEffect(() => {
     //     fetch('appointmentOptions.json')

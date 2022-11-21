@@ -3,12 +3,19 @@ import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../contexts/AuthProvider';
+import useToken from '../../hooks/useToken';
 
 const SignUp = () => {
     const { register, formState: { errors }, handleSubmit } = useForm();
-    const { createUser, updateUser } = useContext(AuthContext);
+    const { createUser, upDateUser } = useContext(AuthContext);
+    const [createdUserEmail, setCreatedUserEmail] = useState('');
+    const [token] = useToken(createdUserEmail);
     const [signUpError, setSignUpError] = useState('');
     const navigate = useNavigate();
+
+    if (token) {
+        navigate('/');
+    }
 
     const handleSignUp = (data) => {
         console.log(data);
@@ -19,20 +26,35 @@ const SignUp = () => {
                 console.log(user);
                 toast('User Created Successfully.')
                 const userInfo = {
-                    displayName: data.name,
-
+                    displayName: data.name
                 }
-                updateUser(userInfo)
+                upDateUser(userInfo)
                     .then(() => {
-                        navigate('/');
+                        saveUser(data.name, data.email);
                     })
                     .catch(error => console.error(error))
             })
             .catch(error => {
 
-                console.error(error)
+                console.log(error)
                 setSignUpError(error.message)
             });
+    }
+
+    const saveUser = (name, email) => {
+        const user = { name, email };
+        fetch('http://localhost:5000/users', {
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify(user)
+        })
+            .then(res => res.json())
+            .then(data => {
+                console.log('Save User', data);
+                setCreatedUserEmail(email);
+            })
     }
 
     return (
